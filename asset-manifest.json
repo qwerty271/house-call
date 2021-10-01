@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/house-call/static/css/main.be69b5bd.chunk.css",
+    "main.js": "/house-call/static/js/main.28af7e03.chunk.js",
+    "main.js.map": "/house-call/static/js/main.28af7e03.chunk.js.map",
+    "runtime-main.js": "/house-call/static/js/runtime-main.eb5ba28a.js",
+    "runtime-main.js.map": "/house-call/static/js/runtime-main.eb5ba28a.js.map",
+    "static/css/2.ab68da88.chunk.css": "/house-call/static/css/2.ab68da88.chunk.css",
+    "static/js/2.06fa9184.chunk.js": "/house-call/static/js/2.06fa9184.chunk.js",
+    "static/js/2.06fa9184.chunk.js.map": "/house-call/static/js/2.06fa9184.chunk.js.map",
+    "static/js/3.9e035712.chunk.js": "/house-call/static/js/3.9e035712.chunk.js",
+    "static/js/3.9e035712.chunk.js.map": "/house-call/static/js/3.9e035712.chunk.js.map",
+    "index.html": "/house-call/index.html",
+    "static/css/2.ab68da88.chunk.css.map": "/house-call/static/css/2.ab68da88.chunk.css.map",
+    "static/css/main.be69b5bd.chunk.css.map": "/house-call/static/css/main.be69b5bd.chunk.css.map",
+    "static/js/2.06fa9184.chunk.js.LICENSE.txt": "/house-call/static/js/2.06fa9184.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.eb5ba28a.js",
+    "static/css/2.ab68da88.chunk.css",
+    "static/js/2.06fa9184.chunk.js",
+    "static/css/main.be69b5bd.chunk.css",
+    "static/js/main.28af7e03.chunk.js"
+  ]
+}
