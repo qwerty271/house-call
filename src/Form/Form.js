@@ -6,55 +6,113 @@ import "react-dadata/dist/react-dadata.css";
 
 function Form() {
   const [result, setResult] = React.useState("");
+  const [address, setAddress] = React.useState({});
 
-  function getAddress(address, name, date) {
-    const url =
-      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-    const token = "ea73e6140b9125725640d3019f9f777cfd0d12a3";
-    const query = address;
-    const options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: "Token " + token,
-      },
-      body: JSON.stringify({ query: query }),
+  function transliterate(word) {
+    const a = {
+      Ё: "YO",
+      Й: "I",
+      Ц: "TS",
+      У: "U",
+      К: "K",
+      Е: "E",
+      Н: "N",
+      Г: "G",
+      Ш: "SH",
+      Щ: "SCH",
+      З: "Z",
+      Х: "H",
+      Ъ: "'",
+      ё: "yo",
+      й: "i",
+      ц: "ts",
+      у: "u",
+      к: "k",
+      е: "e",
+      н: "n",
+      г: "g",
+      ш: "sh",
+      щ: "sch",
+      з: "z",
+      х: "h",
+      ъ: "'",
+      Ф: "F",
+      Ы: "I",
+      В: "V",
+      А: "a",
+      П: "P",
+      Р: "R",
+      О: "O",
+      Л: "L",
+      Д: "D",
+      Ж: "ZH",
+      Э: "E",
+      ф: "f",
+      ы: "i",
+      в: "v",
+      а: "a",
+      п: "p",
+      р: "r",
+      о: "o",
+      л: "l",
+      д: "d",
+      ж: "zh",
+      э: "e",
+      Я: "Ya",
+      Ч: "CH",
+      С: "S",
+      М: "M",
+      И: "I",
+      Т: "T",
+      Ь: "'",
+      Б: "B",
+      Ю: "YU",
+      я: "ya",
+      ч: "ch",
+      с: "s",
+      м: "m",
+      и: "i",
+      т: "t",
+      ь: "'",
+      б: "b",
+      ю: "yu",
     };
-    fetch(url, options)
-      .then((response) => response.json())
-      .then((data) => {
-        const dataAddress = data.suggestions[0];
-        console.log(dataAddress.data);
-        setResult(
-          dataAddress.data.country +
-            "/" +
-            dataAddress.data.region_iso_code +
-            "/" +
-            "VDV" +
-            "/GLAT" +
-            dataAddress.data.geo_lat +
-            "-GLON" +
-            dataAddress.data.geo_lon +
-            "/" +
-            date
-        );
-        console.log(result);
+    return word
+      .split("")
+      .map(function (char) {
+        return a[char] || char;
       })
-      .catch((error) => {
-        setResult("Ошибка");
-        console.log("error", error);
-      });
+      .join("");
   }
 
-  function daysInMonth(month, year) {
-    let monthNum = new Date(Date.parse(month + " 1," + year)).getMonth() + 1;
-    return new Date(year, monthNum, 0).getDate();
+  function getAddress(name, date) {
+    const nameArray = name.split(" ");
+    let totalName = "";
+
+    if (address) {
+      nameArray.forEach((word) => {
+        totalName += word.substring(0, 1).toLocaleUpperCase();
+      });
+      transliterate(totalName);
+      setResult(
+        address.data.country +
+          "/" +
+          address.data.region_iso_code +
+          "/" +
+          transliterate(totalName).toLocaleUpperCase() +
+          "/GLAT" +
+          (address.data.geo_lat ? address.data.geo_lat : "") +
+          "-GLON" +
+          (address.data.geo_lon ? address.data.geo_lon : "") +
+          "/" +
+          date
+      );
+    } else {
+      setResult("Ошибка");
+    }
   }
 
   function reviewDate(date) {
-    console.log(date);
     const today = new Date(
       new Date().getFullYear(),
       new Date().getMonth() + 1,
@@ -66,14 +124,9 @@ function Form() {
       reverseDate[1],
       reverseDate[2]
     ).getTime();
-    console.log(reverseDateMs - today);
-    console.log(reverseDateMs);
-    console.log(reverseDate[2]);
-    if (reverseDateMs - today > 1209600000) {
-      console.log(true);
+    if (reverseDateMs - today > 1209600000 || reverseDateMs - today < 0) {
       return true;
     } else {
-      console.log(false);
       return false;
     }
   }
@@ -83,13 +136,13 @@ function Form() {
       <h2 className="form__title">Запись к врачу</h2>
 
       <Formik
-        initialValues={{ name: "", age: "", address: "", date: "" }}
+        initialValues={{ name: "", age: "", date: "" }}
         validate={(values) => {
           const errors = {};
           if (!values.name) {
             errors.name = "Это обязательное поле";
           } else if (
-            !/^[А-ЯЁ][а-яё]*([-][А-ЯЁ][а-яё]*)?\s[А-ЯЁ][а-яё]*\s[А-ЯЁ][а-яё]*$/i.test(
+            !/^[А-ЯЁA-Z][а-яёa-z]*([-][А-ЯЁA-Z][а-яёa-z]*)?\s[А-ЯЁA-Z][а-яёa-z]*\s[А-ЯЁA-Z][а-яёa-z]*$/i.test(
               values.name
             )
           ) {
@@ -100,10 +153,6 @@ function Form() {
             errors.age = "Это обязательное поле";
           } else if (values.age > 150 || values.age < 0) {
             errors.age = "Допустимый возраст от 0 до 150";
-          }
-
-          if (!values.address) {
-            errors.address = "Это обязательное поле";
           }
 
           if (!values.date) {
@@ -120,7 +169,7 @@ function Form() {
           return errors;
         }}
         onSubmit={(values) => {
-          getAddress(values.address, values.name, values.date);
+          getAddress(values.name, values.date);
         }}
       >
         {({
@@ -167,36 +216,17 @@ function Form() {
             </span>
             <p className="fields__title">Адрес</p>
             <AddressSuggestions
-              token=""
-              value={values.address}
-              onBlur={handleBlur}
+              token="ea73e6140b9125725640d3019f9f777cfd0d12a3"
+              count="5"
+              hintText="Выберите нужный адрес"
+              selectOnBlur="true"
+              value={address}
+              onChange={setAddress}
               inputProps={{
-                name: "address",
-                onBlur: handleBlur,
-                onChange: handleChange,
                 className: "fields__input",
               }}
             />
-            {/* <input
-              className={`fields__input ${
-                errors.address && touched.address && errors.address
-                  ? "fields__input-error"
-                  : ""
-              }`}
-              type="text"
-              placeholder="Адрес"
-              name="address"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.address}
-            ></input> */}
-            <span className="fields__span-error">
-              {errors.address && touched.address && errors.address
-                ? errors.address && touched.address && errors.address
-                : status
-                ? status
-                : ""}
-            </span>
+
             <p className="fields__title">Дата записи</p>
             <input
               className={`fields__input ${
@@ -221,12 +251,11 @@ function Form() {
               className={`fields__button  ${
                 (errors.name && touched.name && errors.name) ||
                 (errors.age && touched.age && errors.age) ||
-                (errors.address && touched.address && errors.address) ||
                 (errors.date && touched.date && errors.date)
                   ? "fields__button_inactive"
                   : ""
               } ${
-                touched.name && touched.age && touched.date && touched.address
+                touched.name && touched.age && touched.date
                   ? ""
                   : "fields__button_inactive"
               }`}
@@ -234,7 +263,6 @@ function Form() {
               disabled={`${
                 (errors.name && touched.name && errors.name) ||
                 (errors.age && touched.age && errors.age) ||
-                (errors.address && touched.address && errors.address) ||
                 (errors.date && touched.date && errors.date)
                   ? "disabled"
                   : ""
