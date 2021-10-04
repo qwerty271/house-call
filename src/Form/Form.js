@@ -88,7 +88,7 @@ function Form() {
   function getAddress(name, date) {
     const nameArray = name.split(" ");
     let totalName = "";
-
+    const changedDate = date.split(".").reverse().join("-");
     if (address) {
       nameArray.forEach((word) => {
         totalName += word.substring(0, 1).toLocaleUpperCase();
@@ -105,7 +105,7 @@ function Form() {
           "-GLON" +
           (address.data.geo_lon ? address.data.geo_lon : "") +
           "/" +
-          date
+          changedDate
       );
     } else {
       setResult("Ошибка");
@@ -168,8 +168,10 @@ function Form() {
           }
           return errors;
         }}
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           getAddress(values.name, values.date);
+          resetForm(values);
+          setAddress("");
         }}
       >
         {({
